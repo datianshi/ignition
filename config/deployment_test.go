@@ -93,8 +93,8 @@ func testDeployment(t *testing.T, when spec.G, it spec.S) {
 				Expect(d.UAAOrigin).To(Equal("okta"))
 				Expect(d.ClientID).To(Equal("cf"))
 				Expect(d.ClientSecret).To(BeZero())
-				Expect(d.Username).To(Equal("test-username"))
-				Expect(d.Password).To(Equal("test-password"))
+				// Expect(d.Username).To(Equal("test-username"))
+				// Expect(d.Password).To(Equal("test-password"))
 			})
 
 			it("can generate an oauth2.Config", func() {
@@ -135,29 +135,29 @@ func testDeployment(t *testing.T, when spec.G, it spec.S) {
 				})
 			})
 
-			when("the api username is empty", func() {
-				it.Before(func() {
-					os.Setenv("IGNITION_API_USERNAME", "")
-				})
-
-				it("errors", func() {
-					d, err := NewDeployment("ignition-config")
-					Expect(err).To(HaveOccurred())
-					Expect(d).To(BeNil())
-				})
-			})
-
-			when("the api password is empty", func() {
-				it.Before(func() {
-					os.Setenv("IGNITION_API_PASSWORD", "")
-				})
-
-				it("errors", func() {
-					d, err := NewDeployment("ignition-config")
-					Expect(err).To(HaveOccurred())
-					Expect(d).To(BeNil())
-				})
-			})
+			// when("the api username is empty", func() {
+			// 	it.Before(func() {
+			// 		os.Setenv("IGNITION_API_USERNAME", "")
+			// 	})
+			//
+			// 	it("errors", func() {
+			// 		d, err := NewDeployment("ignition-config")
+			// 		Expect(err).To(HaveOccurred())
+			// 		Expect(d).To(BeNil())
+			// 	})
+			// })
+			//
+			// when("the api password is empty", func() {
+			// 	it.Before(func() {
+			// 		os.Setenv("IGNITION_API_PASSWORD", "")
+			// 	})
+			//
+			// 	it("errors", func() {
+			// 		d, err := NewDeployment("ignition-config")
+			// 		Expect(err).To(HaveOccurred())
+			// 		Expect(d).To(BeNil())
+			// 	})
+			// })
 		})
 	})
 
@@ -306,66 +306,66 @@ func testDeployment(t *testing.T, when spec.G, it spec.S) {
 			})
 		})
 
-		when("the service is missing the api username", func() {
-			it.Before(func() {
-				os.Setenv("VCAP_SERVICES", `{
-				  "user-provided": [
-				    {
-				      "name": "ignition-config",
-				      "instance_name": "ignition-config",
-				      "binding_name": null,
-				      "credentials": {
-								"system_domain": "run.example.com",
-								"uaa_origin": "okta",
-								"api_client_id": "test-client-id",
-				        "api_client_secret": "test-client-secret",
-				        "api_password": "test-password"
-				      },
-				      "syslog_drain_url": "",
-				      "volume_mounts": [],
-				      "label": "user-provided",
-				      "tags": []
-				    }
-				  ]
-				}`)
-			})
-
-			it("errors", func() {
-				d, err := NewDeployment("ignition-config")
-				Expect(err).To(HaveOccurred())
-				Expect(d).To(BeNil())
-			})
-		})
-
-		when("the service is missing the api password", func() {
-			it.Before(func() {
-				os.Setenv("VCAP_SERVICES", `{
-				  "user-provided": [
-				    {
-				      "name": "ignition-config",
-				      "instance_name": "ignition-config",
-				      "binding_name": null,
-				      "credentials": {
-								"system_domain": "run.example.com",
-								"uaa_origin": "okta",
-								"api_client_id": "test-client-id",
-				        "api_client_secret": "test-client-secret",
-				        "api_username": "test-username"
-				      },
-				      "syslog_drain_url": "",
-				      "volume_mounts": [],
-				      "label": "user-provided",
-				      "tags": []
-				    }
-				  ]
-				}`)
-			})
-
-			it("errors", func() {
-				d, err := NewDeployment("ignition-config")
-				Expect(err).To(HaveOccurred())
-				Expect(d).To(BeNil())
-			})
-		})
+		// when("the service is missing the api username", func() {
+		// 	it.Before(func() {
+		// 		os.Setenv("VCAP_SERVICES", `{
+		// 		  "user-provided": [
+		// 		    {
+		// 		      "name": "ignition-config",
+		// 		      "instance_name": "ignition-config",
+		// 		      "binding_name": null,
+		// 		      "credentials": {
+		// 						"system_domain": "run.example.com",
+		// 						"uaa_origin": "okta",
+		// 						"api_client_id": "test-client-id",
+		// 		        "api_client_secret": "test-client-secret",
+		// 		        "api_password": "test-password"
+		// 		      },
+		// 		      "syslog_drain_url": "",
+		// 		      "volume_mounts": [],
+		// 		      "label": "user-provided",
+		// 		      "tags": []
+		// 		    }
+		// 		  ]
+		// 		}`)
+		// 	})
+		//
+		// 	it("errors", func() {
+		// 		d, err := NewDeployment("ignition-config")
+		// 		Expect(err).To(HaveOccurred())
+		// 		Expect(d).To(BeNil())
+		// 	})
+		// })
+		//
+		// when("the service is missing the api password", func() {
+		// 	it.Before(func() {
+		// 		os.Setenv("VCAP_SERVICES", `{
+		// 		  "user-provided": [
+		// 		    {
+		// 		      "name": "ignition-config",
+		// 		      "instance_name": "ignition-config",
+		// 		      "binding_name": null,
+		// 		      "credentials": {
+		// 						"system_domain": "run.example.com",
+		// 						"uaa_origin": "okta",
+		// 						"api_client_id": "test-client-id",
+		// 		        "api_client_secret": "test-client-secret",
+		// 		        "api_username": "test-username"
+		// 		      },
+		// 		      "syslog_drain_url": "",
+		// 		      "volume_mounts": [],
+		// 		      "label": "user-provided",
+		// 		      "tags": []
+		// 		    }
+		// 		  ]
+		// 		}`)
+		// 	})
+		//
+		// 	it("errors", func() {
+		// 		d, err := NewDeployment("ignition-config")
+		// 		Expect(err).To(HaveOccurred())
+		// 		Expect(d).To(BeNil())
+		// 	})
+		// })
 	})
 }

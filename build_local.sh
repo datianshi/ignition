@@ -11,7 +11,6 @@ pushd $PROJECT_DIR
   go test ./...
 popd
 
-go test ./...
 pushd $PROJECT_DIR/cmd/ignition
   GOOS=linux GOARCH=amd64 go build -o $BUILD_DIR/ignition-linux
   GOOS=darwin GOARCH=amd64 go build -o $BUILD_DIR/ignition-mac

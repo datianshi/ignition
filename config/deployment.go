@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -14,6 +15,7 @@ import (
 	"github.com/pivotalservices/ignition/cloudfoundry"
 	"github.com/pivotalservices/ignition/uaa"
 	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/clientcredentials"
 )
 
 // Deployment is a Cloud Foundry Deployment
@@ -25,8 +27,8 @@ type Deployment struct {
 	UAAOrigin    string           `envconfig:"uaa_origin"`                   // IGNITION_UAA_ORIGIN << REQUIRED
 	ClientID     string           `envconfig:"api_client_id" default:"cf"`   // IGNITION_API_CLIENT_ID
 	ClientSecret string           `envconfig:"api_client_secret" default:""` // IGNITION_API_CLIENT_SECRET
-	Username     string           `envconfig:"api_username"`                 // IGNITION_API_USERNAME << REQUIRED
-	Password     string           `envconfig:"api_password"`                 // IGNITION_API_PASSWORD << REQUIRED
+	Username     string           `ignored:"true" envconfig:"api_username"`  // IGNITION_API_USERNAME << REQUIRED
+	Password     string           `ignored:"true" envconfig:"api_password"`  // IGNITION_API_PASSWORD << REQUIRED
 	CC           cloudfoundry.API `ignored:"true"`                           // Ignored
 	UAA          uaa.API          `ignored:"true"`                           // Ignored
 }
@@ -82,20 +84,25 @@ func NewDeployment(name string) (*Deployment, error) {
 	if d.UAAOrigin == "" {
 		return nil, errors.New("uaa_origin is required")
 	}
-	if strings.TrimSpace(d.Username) == "" {
-		return nil, errors.New("api_username is required")
-	}
-	if strings.TrimSpace(d.Password) == "" {
-		return nil, errors.New("api_password is required")
+	// if strings.TrimSpace(d.Username) == "" {
+	// 	return nil, errors.New("api_username is required")
+	// }
+	// if strings.TrimSpace(d.Password) == "" {
+	// 	return nil, errors.New("api_password is required")
+	// }
+
+	oauthConfig := clientcredentials.Config{
+		ClientID:     d.ClientID,
+		ClientSecret: d.ClientSecret,
+		TokenURL:     fmt.Sprintf("%s/oauth/token", d.UAAURL),
 	}
 
 	config := &cfclient.Config{
 		ApiAddress:        d.APIURL,
-		Username:          d.Username,
-		Password:          d.Password,
 		UserAgent:         "ignition-api",
 		SkipSslValidation: false,
 		HttpClient:        http.DefaultClient,
+		TokenSource:       oauthConfig.TokenSource(context.Background()),
 	}
 
 	if d.ClientSecret != "" {
@@ -110,8 +117,7 @@ func NewDeployment(name string) (*Deployment, error) {
 		URL:          d.UAAURL,
 		ClientID:     d.ClientID,
 		ClientSecret: d.ClientSecret,
-		Username:     d.Username,
-		Password:     d.Password,
+		OauthConfig:  &oauthConfig,
 	}
 	d.UAA = uaaAPI
 	return &d, nil

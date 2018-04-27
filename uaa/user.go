@@ -6,7 +6,7 @@ import (
 
 	"github.com/cloudfoundry-incubator/uaa-cli/uaa"
 	"github.com/pkg/errors"
-	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/clientcredentials"
 )
 
 // Client provides access to the UAA API
@@ -14,11 +14,9 @@ type Client struct {
 	URL          string
 	ClientID     string
 	ClientSecret string
-	Username     string
-	Password     string
-	Token        *oauth2.Token
 	Client       *http.Client
 
+	OauthConfig *clientcredentials.Config
 	userManager *uaa.UserManager
 }
 
